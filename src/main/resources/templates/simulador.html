@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Inicio</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4">
+                <div class="card shadow">
+                    <div class="row justify-content-center">
+                        <div class="">
+                            <div class="card ">
+                                <div class="card-header bg-primary text-white">
+                                    <h3 class="card-title mb-0">Simula tu inversión</h3>
+                                </div>
+                                <div class="card-body">
+                                    <form id="frm-simulator" th:action="@{/simulador}" class="needs-validation" method="post">
+                                        <input type="hidden" name="id" th:value="1"/>
+                                        <!-- Nombre y Apellido -->
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <label for="nombre" class="form-label">Nombre</label>
+                                                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="apellido" class="form-label">Apellido</label>
+                                                <input type="text" class="form-control" id="apellido" name="apellido" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Cédula -->
+                                        <div class="mb-3">
+                                            <label for="cedula" class="form-label">Cédula/Número de Identificación</label>
+                                            <input type="text" class="form-control" id="cedula" name="cedula" required>
+                                        </div>
+
+                                        <!-- Email -->
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Correo Electrónico</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                            <div class="form-text">Nunca compartiremos tu email con nadie más.</div>
+                                        </div>
+
+                                        <!-- Monto de Dinero -->
+                                        <div class="mb-3">
+                                            <label for="monto" class="form-label">Monto de Dinero</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">$</span>
+                                                <input type="number" class="form-control" id="monto" name="monto" min="0"
+                                                       step="0.01" required>
+                                                <div id="error-monto" class="invalid-feedback">
+                                                    invalido
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Período -->
+                                        <div class="mb-3">
+                                            <label for="periodo" class="form-label">Período capitalización</label>
+                                            <select class="form-select" id="periodo" name="periodo" required>
+                                                <option value="" selected disabled>Seleccione un período</option>
+                                                <option value="12">Mensual</option>
+                                                <option value="4">Trimestral</option>
+                                                <option value="2">Semestral</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Número de Años -->
+                                        <div class="mb-3">
+                                            <label for="anios" class="form-label">Número de Años</label>
+                                            <input type="number" class="form-control" id="anios" name="anios" min="1" max="30"
+                                                   required>
+                                        </div>
+
+                                        <!-- Botones -->
+                                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                            <button type="reset" class="btn btn-outline-secondary me-md-2">Limpiar</button>
+                                            <button type="submit" class="btn btn-primary">Enviar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-8">
+
+                <div class="card shadow border-0">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="card-title mb-0">Simulaciones anteriores</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table id="tabla-polizas" class="table table-hover table-striped mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th class="text-center">ID</th>
+                                    <th>Capital Inicial</th>
+                                    <th>Tasa (%)</th>
+                                    <th>Años</th>
+                                    <th>Monto Final</th>
+                                    <th>Interes Ganado</th>
+                                </tr>
+                                </thead>
+                                <tbody id="body-polizas" class="table-group-divider">
+                                <tr th:each="p : ${simulador}">
+                                    <td class="text-center fw-bold" th:text="${p.id}"></td>
+                                    <td class="text-end"
+                                        th:text="${'$' + #numbers.formatDecimal(p.capitali, 1, 'COMMA', 2, 'POINT')}"></td>
+                                    <td class="text-center text-success fw-semibold" th:text="${p.tasaInteres + '%'}"></td>
+                                    <td class="text-center" th:text="${p.tiempo + ' años'}"></td>
+                                    <td class="text-end fw-bold text-primary"
+                                        th:text="${'$' + #numbers.formatDecimal(p.montof, 1, 'COMMA', 2, 'POINT')}"></td>
+                                    <td class="text-end fw-bold text-primary"
+                                        th:text="${'$' + #numbers.formatDecimal(p.montof - p.capitali, 1, 'COMMA', 2, 'POINT')}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted" th:text="'Mostrando ' + ${polizas.size()} + ' registros'"></small>
+                            <nav>
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">Siguiente</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const basePath = /*[[@{/}]]*/ '';
+    </script>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const element = document.getElementById("cedula")
+            console.log(element.value)
+            if (element.value.length>=9){
+                listarPolizasByDni(`${basePath}poliza/${element.value}`)
+            }
+        });
+
+        function llenarFormulario(datos) {
+            const form = document.getElementById("frm-simulator");
+            for (const [clave, valor] of Object.entries(datos)) {
+                const campo = form.querySelector(`[name="${clave}"]`);
+                if (campo) {
+                    campo.value = valor;
+                }
+            }
+        }
+
+        document.getElementById("cedula").addEventListener("keyup", function (e) {
+            e.preventDefault();
+            console.log(e)
+            const element = e.target
+            console.log(element.value)
+            if (element.value.length>=9){
+                listarUsuarioByDni(`${basePath}usuario/${element.value}`,element.value)
+            }
+
+        })
+
+        document.getElementById("frm-simulator").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            console.log(formData)
+            guardarSimulacion(this.action, formData)
+        });
+
+        function construirTabla(polizas){
+
+            const tbody = document.getElementById("body-polizas");
+            tbody.innerHTML=""
+            polizas.map(function (p) {
+                const row = `
+                          <tr>
+                            <td>${p.id}</td>
+                            <td>${p.capitali}</td>
+                            <td>${p.tasaInteres}</td>
+                            <td>${p.tiempo}</td>
+                            <td>${p.montof}</td>
+                            <td>${(p.montof-p.capitali).toFixed(2)}</td>
+                          </tr>
+                        `
+                tbody.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        async function listarUsuarioByDni(url,dni) {
+
+            const response = await fetch(url, {
+                method: "GET"
+            })
+
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+            const usuario = await response.json();
+            console.log(usuario);
+            llenarFormulario(usuario)
+            listarPolizasByDni(`${basePath}poliza/${dni}`)
+        }
+
+        async function listarPolizasByDni(url) {
+
+            const response = await fetch(url, {
+                method: "GET"
+            })
+
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+            const polizas = await response.json();
+            console.log(polizas);
+            construirTabla(polizas)
+        }
+
+        async function guardarSimulacion(url, formData) {
+            ocultarMensajesError()
+            const response = await fetch(url, {
+                method: "POST",
+                body: formData
+            })
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    const errorData = await response.json();
+                    // Mostrar errores específicos si existen
+                    if (errorData.errors && Array.isArray(errorData.errors)) {
+                        errorData.errors.forEach(err => {
+                            const mensaje = err.defaultMessage;
+                            const campo = err.cause?.field || "campo desconocido";
+                            console.warn(`Campo: ${campo}, Mensaje: ${mensaje}`);
+
+                            const elementoError = document.getElementById(`error-${campo}`);
+                            if (elementoError) {
+                                elementoError.innerText = mensaje;
+                                elementoError.style.display = "block"
+                            }
+                        });
+                    } else if (errorData.message) {
+                        alert(`Error: ${errorData.message}`);
+                    } else {
+                        alert(`Error ${response.status}: ${response.statusText}`);
+                    }
+                } else {
+                    alert(`Error ${response.status}: ${response.statusText}`);
+                }
+                return;
+            }
+            const polizas = await response.json();
+            console.log(polizas);
+            const tbody = document.getElementById("body-polizas");
+            tbody.innerHTML=""
+            construirTabla(polizas)
+        }
+        function ocultarMensajesError() {
+            document.querySelectorAll('.invalid-feedback').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+    </script>
+</div>
+</body>
+</html>

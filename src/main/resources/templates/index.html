@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Inicio</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 class="display-4 mb-4">Bienvenido a la Página de Inicio</h1>
+    <p class="lead" th:text="${mensaje}">
+        <a th:href="@{/person}">IR</a>
+    </p>
+    <!--<button class="btn btn-success">¡Haz clic aquí!</button>-->
+</div>
+</body>
+</html>
